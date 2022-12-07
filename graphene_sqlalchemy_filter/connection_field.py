@@ -6,6 +6,7 @@ from typing import cast
 # GraphQL
 import graphene_sqlalchemy
 from graphene.utils.str_converters import to_snake_case
+from graphene.types.utils import get_type
 from promise import Promise, dataloader
 
 # Database
@@ -70,7 +71,7 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
 
     def __init__(self, connection, *args, **kwargs):
         if self.filter_arg not in kwargs:
-            model = connection._meta.node._meta.model
+            model = get_type(connection)._meta.node._meta.model
 
             with suppress(KeyError):
                 kwargs[self.filter_arg] = self.filters[model]
