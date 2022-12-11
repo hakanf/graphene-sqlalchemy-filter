@@ -84,7 +84,7 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
 
         request_filters = args.get(cls.filter_arg)
         filter_set = cls.get_filter_set(info)
-        if not request_filters and filter_set.default:
+        if not request_filters and filter_set and filter_set.default:
             request_filters = filter_set.default
         if request_filters:
             query = filter_set.filter(info, query, request_filters)
@@ -92,7 +92,7 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
         return query
 
     @classmethod
-    def get_filter_set(cls, info: 'ResolveInfo') -> 'FilterSet':
+    def get_filter_set(cls, info: 'ResolveInfo') -> Union['FilterSet', None]:
         """
         Get field filter set.
 
@@ -105,9 +105,12 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
         """
         field_name = info.field_asts[0].name.value
         schema_field = info.parent_type.fields.get(field_name)
-        filters_type = schema_field.args[cls.filter_arg].type
-        filters: 'FilterSet' = filters_type.graphene_type
-        return filters
+        try:
+            filters_type = schema_field.args[cls.filter_arg].type
+            filters: 'FilterSet' = filters_type.graphene_type
+            return filters
+        except KeyError:
+            return None
 
 
 class ModelLoader(dataloader.DataLoader):
@@ -217,7 +220,7 @@ class ModelLoader(dataloader.DataLoader):
         return key
 
     @classmethod
-    def _get_filter_set(cls, info: 'ResolveInfo') -> 'FilterSet':
+    def _get_filter_set(cls, info: 'ResolveInfo') -> Union['FilterSet', None]:
         """
         Get field filter set.
 
@@ -230,9 +233,12 @@ class ModelLoader(dataloader.DataLoader):
         """
         field_name = info.field_asts[0].name.value
         schema_field = info.parent_type.fields.get(field_name)
-        filters_type = schema_field.args[cls.filter_arg].type
-        filters: 'FilterSet' = filters_type.graphene_type
-        return filters
+        try:
+            filters_type = schema_field.args[cls.filter_arg].type
+            filters: 'FilterSet' = filters_type.graphene_type
+            return filters
+        except KeyError:
+            return None
 
     def _get_query(self) -> 'Query':
         """
@@ -246,7 +252,7 @@ class ModelLoader(dataloader.DataLoader):
 
         request_filters = self.graphql_args.get(self.filter_arg)
         filter_set = self._get_filter_set(self.info)
-        if not request_filters and filter_set.default:
+        if not request_filters and filter_set and filter_set.default:
             request_filters = filter_set.default
         if request_filters:
             subquery = filter_set.filter(self.info, subquery, request_filters)
