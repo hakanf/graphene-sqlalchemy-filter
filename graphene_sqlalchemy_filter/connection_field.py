@@ -2,7 +2,6 @@
 from contextlib import suppress
 from functools import partial
 from typing import cast
-import logging
 
 # GraphQL
 import graphene_sqlalchemy
@@ -13,8 +12,6 @@ from promise import Promise, dataloader
 # Database
 from sqlalchemy import inspection, tuple_
 from sqlalchemy.orm import Load, aliased, contains_eager
-
-logger = logging.getLogger("uvicorn")
 
 MYPY = False
 if MYPY:
@@ -87,9 +84,9 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
 
         request_filters = args.get(cls.filter_arg)
         filter_set = cls.get_filter_set(info)
-        logger.info(dir(filter_set))
-        if not request_filters and filter_set.default is not None:
-            request_filters = filter_set.default
+        print(dir(filter_set))
+        if not request_filters and filter_set._meta.default is not None:
+            request_filters = filter_set._meta.default
         if request_filters:
             query = filter_set.filter(info, query, request_filters)
 
