@@ -92,7 +92,7 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
         return query
 
     @classmethod
-    def get_filter_set(cls, info: 'ResolveInfo') -> Union['FilterSet', None]:
+    def get_filter_set(cls, info: 'ResolveInfo') -> 'Union[FilterSet, None]':
         """
         Get field filter set.
 
@@ -220,7 +220,7 @@ class ModelLoader(dataloader.DataLoader):
         return key
 
     @classmethod
-    def _get_filter_set(cls, info: 'ResolveInfo') -> Union['FilterSet', None]:
+    def _get_filter_set(cls, info: 'ResolveInfo') -> 'Union[FilterSet, None]':
         """
         Get field filter set.
 
