@@ -121,6 +121,7 @@ def _in_filter_type(
 class FilterSetOptions(InputObjectTypeOptions):
     model = None
     fields = None  # type: Dict[str, List[str]]
+    default = None
 
 
 class FilterSet(graphene.InputObjectType):
@@ -129,6 +130,7 @@ class FilterSet(graphene.InputObjectType):
     _custom_filters = set()
     _filter_aliases = '_filter_aliases'
     model = None
+    defult = None
 
     EQ = 'eq'
     NE = 'ne'
@@ -264,7 +266,7 @@ class FilterSet(graphene.InputObjectType):
 
     @classmethod
     def __init_subclass_with_meta__(
-        cls, model=None, fields=None, _meta=None, **options
+        cls, model=None, fields=None, _meta=None, default=None, **options
     ):
         if model is None and fields:
             raise AttributeError('Model not specified')
@@ -274,6 +276,9 @@ class FilterSet(graphene.InputObjectType):
 
         cls.model = model
         _meta.model = model
+
+        cls.default = default
+        _meta.default = default
 
         extra_expressions = {}
         extra_allowed_filters = {}

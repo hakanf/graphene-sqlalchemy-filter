@@ -85,8 +85,8 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
 
         request_filters = args.get(cls.filter_arg)
         filter_set = cls.get_filter_set(info)
-        if not request_filters and filter_set.Meta.default_filters:
-            request_filters = filter_set.Meta.default_filters
+        if not request_filters and filter_set._meta.default is not None:
+            request_filters = filter_set._meta.default
         if request_filters:
             query = filter_set.filter(info, query, request_filters)
 
