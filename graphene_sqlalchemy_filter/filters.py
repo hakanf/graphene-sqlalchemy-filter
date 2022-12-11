@@ -130,7 +130,7 @@ class FilterSet(graphene.InputObjectType):
     _custom_filters = set()
     _filter_aliases = '_filter_aliases'
     model = None
-    defult = None
+    default = None
 
     EQ = 'eq'
     NE = 'ne'
