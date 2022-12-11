@@ -84,11 +84,9 @@ class FilterableConnectionField(graphene_sqlalchemy.SQLAlchemyConnectionField):
 
         request_filters = args.get(cls.filter_arg)
         filter_set = cls.get_filter_set(info)
-        if not request_filters and filter_set.default is not None:
-            print("get_query setting default filters {filter_set.default=}")
+        if not request_filters and filter_set.default:
             request_filters = filter_set.default
-        if request_filters is not None:
-            print(f"{request_filters=}")
+        if request_filters:
             query = filter_set.filter(info, query, request_filters)
 
         return query
@@ -248,11 +246,9 @@ class ModelLoader(dataloader.DataLoader):
 
         request_filters = self.graphql_args.get(self.filter_arg)
         filter_set = self._get_filter_set(self.info)
-        if not request_filters and filter_set.default is not None:
-            print("_get_query setting default filters {filter_set.default=}")
+        if not request_filters and filter_set.default:
             request_filters = filter_set.default
-        if request_filters is not None:
-            print(f"{request_filters=}")
+        if request_filters:
             subquery = filter_set.filter(self.info, subquery, request_filters)
 
         aliased_model = aliased(
